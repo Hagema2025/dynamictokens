@@ -39,3 +39,9 @@ jobs:
           GITHUB_BRANCH_SHOWS: ${{ secrets.BRANCH_SHOWS }}
         # xvfb-run creates a virtual display so co.headless(False) doesn't crash
         run: xvfb-run -a python main.py
+      - name: Upload Debug Screenshot
+        uses: actions/upload-artifact@v4
+        if: always() # Ensures it uploads even if the python script fails
+        with:
+          name: cloudflare-debug
+          path: cloudflare_debug.png
