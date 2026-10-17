@@ -62,7 +62,14 @@ def extract_tokens():
     
     print("🌍 Navigating to region context (Chennai)...")
     page.get("https://in.bookmyshow.com/explore/home/chennai")
-    time.sleep(6)
+    
+    # Wait longer in a datacenter environment
+    print("⏳ Waiting 15 seconds for Cloudflare...")
+    time.sleep(15) 
+    
+    # Take a picture of what the browser is actually seeing
+    page.get_screenshot(path="cloudflare_debug.png")
+    print("📸 Saved debug screenshot.")
     
     tokens = {"x-token": None, "bmsId": None, "cf_clearance": None}
     
