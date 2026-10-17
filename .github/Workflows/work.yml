@@ -25,7 +25,7 @@ jobs:
       - name: Install System Dependencies (Xvfb & Chromium)
         run: |
           sudo apt-get update
-          sudo apt-get install xvfb chromium-browser -y
+          for i in 1 2 3; do sudo apt-get install -y xvfb chromium-browser && break || sleep 10; done
           
       - name: Install Python Dependencies
         run: pip install DrissionPage requests
