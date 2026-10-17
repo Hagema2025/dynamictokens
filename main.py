@@ -63,36 +63,33 @@ def extract_tokens():
     print("🌍 Navigating to region context (Chennai)...")
     page.get("https://in.bookmyshow.com/explore/home/chennai")
     
-    # Wait longer in a datacenter environment
     print("⏳ Waiting 15 seconds for Cloudflare...")
     time.sleep(15) 
-    
-    # Take a picture of what the browser is actually seeing
     page.get_screenshot(path="cloudflare_debug.png")
-    print("📸 Saved debug screenshot.")
     
     tokens = {"x-token": None, "bmsId": None, "cf_clearance": None}
-    
-    # 1. EXTRACT COOKIES
-    for cookie in page.cookies():
-        if cookie.get("name") == "cf_clearance":
-            tokens["cf_clearance"] = cookie.get("value")
-        elif cookie.get("name") == "bmsId":
-            tokens["bmsId"] = cookie.get("value")
             
-    # 2. NAVIGATE TO TRIGGER THE TOKEN
-    print("🎬 Navigating to a movie page to trigger API requests...")
+    # 1. NAVIGATE TO TRIGGER THE TOKEN & SET SESSION
+    print("🎬 Navigating to a deeper page to trigger APIs and session cookies...")
     page.get("https://in.bookmyshow.com/chennai/movies")
     
-    # 3. INTERCEPT THE X-TOKEN
+    # 2. INTERCEPT THE X-TOKEN
     try:
-        packet = page.listen.wait(timeout=5)
+        # Increased timeout to give the page time to load and fire APIs
+        packet = page.listen.wait(timeout=10)
         if packet:
             req_headers = packet.request.headers
             tokens["x-token"] = req_headers.get("x-token") or req_headers.get("X-Token")
             print("✅ Successfully intercepted x-token from network traffic!")
     except Exception as e:
         print(f"⚠️ Could not intercept token: {e}")
+        
+    # 3. EXTRACT COOKIES (Moved to the end so BMS has time to set them)
+    for cookie in page.cookies():
+        if cookie.get("name") == "cf_clearance":
+            tokens["cf_clearance"] = cookie.get("value")
+        elif cookie.get("name") == "bmsId":
+            tokens["bmsId"] = cookie.get("value")
         
     page.listen.stop()
     page.quit()
@@ -119,6 +116,5 @@ def extract_tokens():
     else:
         print("⚠️ Missing one or more tokens. Skipping GitHub update.")
         
-    return tokens
-if __name__ == "__main__":
+    return tokensif __name__ == "__main__":
     extract_tokens()
