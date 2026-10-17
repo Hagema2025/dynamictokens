@@ -1,0 +1,41 @@
+name: Extract BMS Tokens
+
+on:
+  workflow_dispatch: # Allows you to run this manually from the Actions tab
+  repository_dispatch:
+    types: [trigger-token-extractor] 
+  # Uncomment below to run automatically (e.g., every 6 hours)
+  # schedule:
+  #   - cron: '0 */6 * * *'
+
+jobs:
+  extract-tokens:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15 # Fails fast if Cloudflare blocks it forever
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install System Dependencies (Xvfb & Chromium)
+        run: |
+          sudo apt-get update
+          sudo apt-get install xvfb chromium-browser -y
+          
+      - name: Install Python Dependencies
+        run: pip install DrissionPage requests
+
+      - name: Run Token Extractor Script
+        env:
+          # Ensure these are set in your GitHub Repo -> Settings -> Secrets and variables
+          GITHUB_REPO_SHOWS: ${{ vars.GITHUB_REPO_SHOWS }}
+          GITHUB_TOKEN_SHOWS: ${{ vars.GITHUB_TOKEN_SHOWS }} # Typically a secret, not a var
+          GITHUB_SDYNAMICTOKENS_PATH: ${{ vars.GITHUB_SDYNAMICTOKENS_PATH }}
+          GITHUB_BRANCH_SHOWS: ${{ vars.GITHUB_BRANCH_SHOWS }}
+        # xvfb-run creates a virtual display so co.headless(False) doesn't crash
+        run: xvfb-run -a python extract_tokens.py
