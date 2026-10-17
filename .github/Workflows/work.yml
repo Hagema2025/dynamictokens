@@ -33,9 +33,9 @@ jobs:
       - name: Run Token Extractor Script
         env:
           # Ensure these are set in your GitHub Repo -> Settings -> Secrets and variables
-          GITHUB_REPO_SHOWS: ${{ vars.GITHUB_REPO_SHOWS }}
-          GITHUB_TOKEN_SHOWS: ${{ vars.GITHUB_TOKEN_SHOWS }} # Typically a secret, not a var
-          GITHUB_SDYNAMICTOKENS_PATH: ${{ vars.GITHUB_SDYNAMICTOKENS_PATH }}
-          GITHUB_BRANCH_SHOWS: ${{ vars.GITHUB_BRANCH_SHOWS }}
+          GITHUB_REPO_SHOWS: ${{ secrets.REPO_SHOWS }}
+          GITHUB_TOKEN_SHOWS: ${{ secrets.TOKEN_SHOWS }}
+          GITHUB_SDYNAMICTOKENS_PATH: ${{ secrets.SDYNAMICTOKENS_PATH }}
+          GITHUB_BRANCH_SHOWS: ${{ secrets.BRANCH_SHOWS }}
         # xvfb-run creates a virtual display so co.headless(False) doesn't crash
-        run: xvfb-run -a python extract_tokens.py
+        run: xvfb-run -a python main.py
