@@ -97,7 +97,13 @@ def extract_tokens():
     page.listen.stop()
     page.quit()
     
-    # 4. STORE IN GITHUB IF ALL TOKENS ACQUIRED
+    # 4. DEBUG AND STORE IN GITHUB
+    print("\n--- 📊 TOKEN EXTRACTION RESULTS ---")
+    print(f"bmsId: {'✅ FOUND' if tokens['bmsId'] else '❌ MISSING'}")
+    print(f"cf_clearance: {'✅ FOUND' if tokens['cf_clearance'] else '❌ MISSING'}")
+    print(f"x-token: {'✅ FOUND' if tokens['x-token'] else '❌ MISSING'}")
+    print("-----------------------------------\n")
+
     if all([tokens["x-token"], tokens["bmsId"], tokens["cf_clearance"]]):
         print("💾 All tokens acquired successfully. Saving to GitHub...")
         try:
@@ -114,6 +120,5 @@ def extract_tokens():
         print("⚠️ Missing one or more tokens. Skipping GitHub update.")
         
     return tokens
-
 if __name__ == "__main__":
     extract_tokens()
